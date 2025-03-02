@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "nMkusMscCE1+kIPdCUiUqjMPABMtag5ne1Sk+wFSu00=",
+  "Source": "WhatsAppIntegration",
+  "BasePath": "_content/WhatsAppIntegration",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}
