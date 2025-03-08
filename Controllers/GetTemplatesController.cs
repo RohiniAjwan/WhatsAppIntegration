@@ -82,8 +82,8 @@ private async Task<HttpResponseMessage> GetWhatsAppTemplates()
         {
             using (HttpClient client = new HttpClient())
             {
-                string url = "https://graph.facebook.com/v22.0/594349090422639/message_templates?fields=name,status,category,language,components,created_time&limit=1000";
-                string accessToken = "EAAa6PEobbbQBOzJlBIzEDpVnnAl8b5GY1bNXSASU4vzQUhQ4LQC3fuWFy5hEZCOnTJt1wXQBrPsuOZAhf4eU32ETSqXex32L45ZAzZBLSCrFx9aMKcscanZCFzPa2y7jOi6jM4CrDWCJ88mwZAt7V06PQf5v3NZCgkGG1AZC2FxuB41zsbPhiMe7VIZBZBqF0GPZCe5iAm8hCCIoVLOrRhgAF1ZAWyou9fJ2PHwLr6vSdz4AkLYT8sDdf9gZD";
+                string url = "https://graph.facebook.com/v22.0/1387600328936557/message_templates?fields=name,status,category,language,components,created_time&limit=1000";
+                string accessToken = "EAAa6PEobbbQBOzHI8ffk1mtadKPKaLsSw3nFEP8HBdnAAGZAcZBeZAMk25n6hNM1W2aNUYW1dxnHF7w3U2T4r1eTGAMEqpBwY73gsNHLtd0HJONvLkhP0ZAjxssBBnMD1PUoPH1zjrlE1YrqGi7ENqnwO36VSEgMGZB1mARWWxPLkNlLZAs37De6TrEhFVLsvIC10TfhhfZAn78eFwf";
 
                 client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
                 client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));

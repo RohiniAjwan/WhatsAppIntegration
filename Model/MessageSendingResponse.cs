@@ -8,13 +8,13 @@ namespace WhatsAppIntegration.Model
         public string MessagingProduct { get; set; }
 
         [JsonProperty("contacts")]
-        public List<Contact> Contacts { get; set; }
+        public List<ContactMS> Contacts { get; set; }
 
         [JsonProperty("messages")]
         public List<WhatsAppMessage> Messages { get; set; }
     }
 
-    public partial class Contact
+    public partial class ContactMS
     {
         [JsonProperty("input")]
         public string Input { get; set; }

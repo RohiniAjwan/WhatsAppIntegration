@@ -24,14 +24,14 @@ namespace OrderDashboard.Utilities
                             entity.PhoneNumber2 = dr["PhoneNumber2"] != null ? dr["PhoneNumber2"].ToString() : "";
                             entity.Nationality = dr["Nationality"] != null ? dr["Nationality"].ToString() : ""; 
                             entity.Gender = dr["Gender"] != null ? dr["Gender"].ToString() : "";
-                            entity.AreaId = dr["AreaId"] != null ? Convert.ToInt32(dr["AreaId"]) : 0;
-                            entity.AreaName = dr["AreaName"] != null ? dr["AreaName"].ToString() : "";
+                            entity.AreaId = dr["AreaId"] != DBNull.Value ? Convert.ToInt32(dr["AreaId"]) : 0;
+                            entity.AreaName = dr["AreaName"] != DBNull.Value ? dr["AreaName"].ToString() : "";
                             entity.CompanyId = dr["CompanyId"] != null ? Convert.ToInt32(dr["CompanyId"]) : 0;
                             entity.CompanyName = dr["CompanyName"] != null ? dr["CompanyName"].ToString() : "";
                             entity.CreatedDate = dr["CreatedDate"] != null ? dr["CreatedDate"].ToString() : "";
-                            entity.CreatedBy = dr["CreatedBy"] != null ? dr["CreatedBy"].ToString() : "";
+                            entity.CreatedBy = dr["CreatedBy"] != null ? Convert.ToInt32(dr["CreatedBy"]) : 0;
                             entity.UpdatedDate = dr["UpdatedDate"] != null ? dr["UpdatedDate"].ToString() : "";
-                            entity.UpdatedBy = dr["UpdatedBy"] != null ? dr["UpdatedBy"].ToString() : "";
+                            entity.UpdatedBy = dr["UpdatedBy"] != null ? Convert.ToInt32(dr["UpdatedBy"]) : 0;
 
                         contactList.Add(entity);
                     }
@@ -96,6 +96,38 @@ namespace OrderDashboard.Utilities
                 dr.Close();
                 companyResponse.CompanyMasterList = null;
                 return companyResponse;
+                throw ex;
+            }
+
+        }
+
+        public static Login? MapToLoginRecordSync<T>(this DbDataReader dr) where T : new()
+        {
+            Login loginResponse = new Login();
+            try
+            {
+                if (dr != null && dr.HasRows)
+                {
+                    while (dr.Read())
+                    {
+                        loginResponse.Id = dr["Id"] != null ? Convert.ToInt32(dr["Id"]) : 0;
+                        loginResponse.CompanyId = dr["CompanyId"] != null ? Convert.ToInt32(dr["CompanyId"]) : 0;
+                        loginResponse.Name = dr["Name"] != null ? dr["Name"].ToString() : "";
+                        loginResponse.UserName = dr["UserName"] != null ? dr["UserName"].ToString() : "";
+                        loginResponse.Message = dr["Message"] != null ? dr["Message"].ToString() : "";
+                    }
+
+                    dr.Close();
+                    return loginResponse;
+                }
+                else
+                    
+                return null;
+            }
+            catch (Exception ex)
+            {
+                dr.Close();
+                return null;
                 throw ex;
             }
 

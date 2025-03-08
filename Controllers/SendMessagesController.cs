@@ -99,8 +99,8 @@ namespace WhatsAppIntegration.Controllers
         {
             using (HttpClient client = new HttpClient())
             {
-                string url = "https://graph.facebook.com/v22.0/611970238655568/messages";
-                string accessToken = "EAAa6PEobbbQBO6bldzNimZCiyz4rfPNDe0ekwVIsWuP6TnvweurccebKbIo8yFVSPNZBT9kO1VsNsA242ic1L5C7EQUH5lhEpRpbIIzERCRewm37ovEchqbja5ySt8OA80q3MsfvRStzRyGqCKfn3RKshtGemvUtmFrMqh211qMOzipwQiZAI7PKUj0H9OVtfZAOTglLdaQmrX7LwZCavuPMoWRmjgfZA9ypH8Pay1DrOvMm0cZC1EZD";
+                string url = "https://graph.facebook.com/v22.0/545009808703733/messages";
+                string accessToken = "EAAa6PEobbbQBOzHI8ffk1mtadKPKaLsSw3nFEP8HBdnAAGZAcZBeZAMk25n6hNM1W2aNUYW1dxnHF7w3U2T4r1eTGAMEqpBwY73gsNHLtd0HJONvLkhP0ZAjxssBBnMD1PUoPH1zjrlE1YrqGi7ENqnwO36VSEgMGZB1mARWWxPLkNlLZAs37De6TrEhFVLsvIC10TfhhfZAn78eFwf";
 
                 client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
                 client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
@@ -113,7 +113,7 @@ namespace WhatsAppIntegration.Controllers
                     template = new
                     {
                         name = title,
-                        language = new { code = "en" }
+                        language = new { code = "en_US" }
                     }
                 };
 
