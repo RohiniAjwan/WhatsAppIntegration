@@ -26,6 +26,11 @@ namespace WhatsAppIntegration.Data
         public DbSet<CompanyResponse> CompanysResponse { get; set; }
         public DbSet<WhatsAppIntegration.Model.Login> Login { get; set; } = default!;
         public DbSet<WhatsAppIntegration.Model.CommonResponse> CommonResponses { get; set; } = default!;
-
+        public DbSet<LogsModel> logsModels { get; set; }
+        public DbSet<Entry> Entries { get; set; }
+        public DbSet<Change> Changes { get; set; }
+        public DbSet<Value> Values { get; set; }
+        public DbSet<Status> Statuses { get; set; }
+        public DbSet<Conversation> Conversations { get; set; }
     }
 }
