@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
+using System.Data;
 using System.Dynamic;
 using System.Linq;
 using System.Text;
@@ -11,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using WhatsAppIntegration.Data;
 using WhatsAppIntegration.Model;
+using Microsoft.Data.SqlClient;
 
 namespace WhatsAppIntegration.Controllers
 {
@@ -68,7 +71,8 @@ namespace WhatsAppIntegration.Controllers
                             whatsAppResponse.Add(responseModel!);
                         }
                     }
-                                        return Ok(whatsAppResponse);
+                         UpdateLogs(whatsAppResponse, templateTitle);
+                         return Ok(whatsAppResponse);
 }
 
                 WhatsAppMessage whatsAppMessage = new WhatsAppMessage();
@@ -123,6 +127,7 @@ namespace WhatsAppIntegration.Controllers
                             whatsAppResponse.Add(responseModel!);
                         }
                     }
+                    UpdateLogs(whatsAppResponse, templateTitle);
                     return Ok(whatsAppResponse);
                 }
 
@@ -150,7 +155,7 @@ namespace WhatsAppIntegration.Controllers
 
             //return CreatedAtAction("GetSendMessage", new { id = sendMessage.PhoneNumber }, sendMessage);
         }
-        // POST: api/SendMediaMessages
+        // POST: api/SendDocumentMessages
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost("SendDocumentMessages")]
         public async Task<IActionResult> PostSendTemplateDocumentMessageAsync(List<String> phoneNumbers, String templateTitle,
@@ -177,6 +182,7 @@ namespace WhatsAppIntegration.Controllers
                             whatsAppResponse.Add(responseModel!);
                         }
                     }
+                    UpdateLogs(whatsAppResponse, templateTitle);
                     return Ok(whatsAppResponse);
                 }
 
@@ -328,6 +334,70 @@ namespace WhatsAppIntegration.Controllers
             }
         }
 
+        private void UpdateLogs(List<MessageSendingResponse> messageSendingResponseList, string templateName) {
+            try
+            {
+                int p_int_prmErrCode = -1;
+                string p_str_prmErrorMsg = "";
+
+                _context.Database.OpenConnection();
+                using (var conn = (SqlConnection)_context.Database.GetDbConnection())  // Cast to SqlConnection
+                {
+                    using (var cmd = new SqlCommand("sp_InsertBulkSentLogs", conn)) // Use SqlCommand
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        // Create DataTable for Table-Valued Parameter
+                        DataTable messageLogMaster = new DataTable();
+                        messageLogMaster.Columns.Add("MessageId", typeof(string));
+                        messageLogMaster.Columns.Add("PhoneNumber", typeof(string));
+                        messageLogMaster.Columns.Add("TemplateName", typeof(string));
+                        
+                        // Populate DataTable
+                        foreach (MessageSendingResponse c in messageSendingResponseList)
+                        {
+                            messageLogMaster.Rows.Add(c.Messages[0].Id??"", c.Contacts[0].Input??"", templateName);
+                        }
+
+                        // Add Table-Valued Parameter
+                        var param = cmd.Parameters.AddWithValue("@messageSendLogs", messageLogMaster);
+                        param.SqlDbType = SqlDbType.Structured;  // Now it works because we're using SqlCommand
+
+                        // Output Parameters
+                        var prmErrCode = new SqlParameter("@prmErrCode", SqlDbType.Int)
+                        {
+                            Direction = ParameterDirection.Output
+                        };
+                        cmd.Parameters.Add(prmErrCode);
+
+                        var prmErrMsg = new SqlParameter("@prmErrMsg", SqlDbType.NVarChar, 500)
+                        {
+                            Direction = ParameterDirection.Output
+                        };
+                        cmd.Parameters.Add(prmErrMsg);
+
+                        // Execute Stored Procedure
+                        cmd.ExecuteNonQuery();
+
+                        // Retrieve Output Parameters
+                        //p_int_prmErrCode = (int)(prmErrCode.Value ?? -1);
+                        //p_str_prmErrorMsg = prmErrMsg.Value?.ToString() ?? "Unknown error";
+
+                        // Prepare response
+                        //var commonResponse = new CommonResponse
+                        //{
+                        //    Error = p_int_prmErrCode == 0 ? 0 : -1,
+                        //    Message = p_int_prmErrCode == 0 ? "Uploaded Successfully" : "Something went wrong"
+                        //};
+
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw (ex);
+            }
+        }
 
     }
 }

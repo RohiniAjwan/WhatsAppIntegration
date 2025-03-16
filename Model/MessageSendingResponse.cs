@@ -26,7 +26,7 @@ namespace WhatsAppIntegration.Model
     public partial class WhatsAppMessage
     {
         [JsonProperty("id")]
-        public string Id { get; set; }
+        public string? Id { get; set; }
 
         [JsonProperty("message_status")]
         public string MessageStatus { get; set; }
