@@ -190,10 +190,10 @@ namespace WhatsAppIntegration.Controllers
                     p_str_prmErrorMsg = prmErrMsg.Value?.ToString() ?? "Unknown error";
 
                     // Prepare response
-                    var commonResponse = new CommonResponse
+                    var commonResponse = new CommonSuccessErrorResponse
                     {
-                        Error = p_int_prmErrCode == 0 ? 0 : -1,
-                        Message = p_int_prmErrCode == 0 ? "Uploaded Successfully" : "Something went wrong"
+                        ErrorCode = p_int_prmErrCode == 0 ? 0 : -1,
+                        ErrorMessage = p_int_prmErrCode == 0 ? "Uploaded Successfully" : "Something went wrong"
                     };
 
                     return Ok(commonResponse);
@@ -202,7 +202,7 @@ namespace WhatsAppIntegration.Controllers
         }
         catch (Exception ex)
         {
-            return Ok(new CommonResponse { Error = -2, Message = ex.Message });
+            return Ok(new CommonSuccessErrorResponse { ErrorCode = -2, ErrorMessage = ex.Message });
         }
         finally
         {

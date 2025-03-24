@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.Data;
-using System.Data.Common;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
@@ -21,80 +16,60 @@ namespace WhatsAppIntegration.Controllers
     public class LogsModelsController : ControllerBase
     {
         private readonly ApplicationDBContext _context;
+        private readonly string _validToken;
 
-        public LogsModelsController(ApplicationDBContext context)
+        public LogsModelsController(ApplicationDBContext context, IConfiguration configuration)
         {
             _context = context;
+            _validToken = configuration["Token:BearerToken"];
         }
 
-        // GET: api/LogsModels
-        //[HttpGet]
-        //public async Task<ActionResult<IEnumerable<LogsModel>>> GetlogsModels()
-        //{
-        //    return await _context.logsModels.ToListAsync();
-        //}
 
-        //// GET: api/LogsModels/5
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<LogsModel>> GetLogsModel(string id)
-        //{
-        //    var logsModel = await _context.logsModels.FindAsync(id);
+        [HttpGet("webhook")]
+        public IActionResult VerifyWebhook(
+            [FromQuery(Name = "hub.mode")] string mode,
+            [FromQuery(Name = "hub.challenge")] string challenge,
+            [FromQuery(Name = "hub.verify_token")] string verify_token)
+        {
+            Console.WriteLine($"Received Webhook Verification Request: mode={mode}, challenge={challenge}, verify_token={verify_token}");
 
-        //    if (logsModel == null)
-        //    {
-        //        return NotFound();
-        //    }
+            string verifyToken = "S8vmOYkOMPrz6xHv9iu6GVKsQWCt0kvAbsP66b8GkTsIlPJUikQvmKCPb7";
 
-        //    return logsModel;
-        //}
+            if (mode == "subscribe" && verify_token == verifyToken)
+            {
+                Console.WriteLine("Verification Successful. Sending challenge back.");
+                return Ok(challenge);
+            }
 
-        // PUT: api/LogsModels/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> PutLogsModel(string id, LogsModel logsModel)
-        //{
-        //    if (id != logsModel.object)
-        //    {
-        //        return BadRequest();
-        //    }
+            Console.WriteLine("Verification Failed.");
+            return Unauthorized("Invalid verification token");
+        }
 
-        //    _context.Entry(logsModel).State = EntityState.Modified;
 
-        //    try
-        //    {
-        //        await _context.SaveChangesAsync();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!LogsModelExists(id))
-        //        {
-        //            return NotFound();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
-
-        //    return NoContent();
-        //}
-
-        // POST: api/LogsModels
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+        //[Authorize]
+        [HttpPost("webhook")]
         [Produces("application/json")]
         public async Task<IActionResult> PostLogsModel([FromBody] LogsModel logsModel)
         {
-            if (logsModel == null)
-            {
-                return BadRequest("Invalid data.");
-            }
+
 
             try
             {
+            if (logsModel == null)
+            {
+                    Utility.DoHandle("Invalid data.", "SavePayLoad");
+                    return BadRequest("Invalid data.");
+            }
                 String payload = JsonConvert.SerializeObject(logsModel);
                 Utility.SavePayLoad(payload);
 
+            /*var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
+            if (token != _validToken)
+            {
+                    Utility.DoHandle("Invalid Token", "SavePayLoad");
+                    return Unauthorized(new { message = "Invalid Token" });
+            }*/
+                
                 List<Status> statusList = [];
                 foreach (var entry in logsModel.entry ?? new List<Entry>())
                 {
@@ -165,10 +140,10 @@ namespace WhatsAppIntegration.Controllers
                         p_str_prmErrorMsg = prmErrMsg.Value?.ToString() ?? "Unknown error";
 
                         // Prepare response
-                        var commonResponse = new CommonResponse
+                        var commonResponse = new CommonSuccessErrorResponse
                         {
-                            Error = p_int_prmErrCode == 0 ? 0 : -1,
-                            Message = p_int_prmErrCode == 0 ? "Uploaded Successfully" : "Something went wrong"
+                            ErrorCode = p_int_prmErrCode == 0 ? 0 : -1,
+                            ErrorMessage = p_int_prmErrCode == 0 ? "Uploaded Successfully" : "Something went wrong"
                         };
 
                         return Ok(commonResponse);
@@ -177,29 +152,9 @@ namespace WhatsAppIntegration.Controllers
             }
             catch (Exception ex)
             {
-                return Ok(new CommonResponse { Error = -2, Message = ex.Message });
+                return Ok(new CommonSuccessErrorResponse { ErrorCode = -2, ErrorMessage = ex.Message });
             }
         }
 
-        // DELETE: api/LogsModels/5
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> DeleteLogsModel(string id)
-        //{
-        //    var logsModel = await _context.logsModels.FindAsync(id);
-        //    if (logsModel == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    _context.logsModels.Remove(logsModel);
-        //    await _context.SaveChangesAsync();
-
-        //    return NoContent();
-        //}
-
-        //private bool LogsModelExists(string id)
-        //{
-        //    return _context.logsModels.Any(e => e.object == id);
-        //}
     }
 }

@@ -63,4 +63,18 @@ namespace WhatsAppIntegration.Model
         public string Before { get; set; }
         public string After { get; set; }
     }
+    [Keyless]
+    public class CreateTemplate
+    {
+        public string? title {  get; set; }
+        public string? titleValue { get; set; }
+        public string? templateTitle { get; set; }
+        public string? body { get; set; }
+        public string? footer { get; set; }
+        public string? phoneNumberTitle { get; set; }
+        public string? phoneNumberValue { get; set; }
+        public string? websiteLinkTitle { get; set; }
+        public string? websiteLinkValue { get; set; }
+
+    }
 }

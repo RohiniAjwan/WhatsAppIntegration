@@ -56,6 +56,51 @@ namespace OrderDashboard.Utilities
             }
 
         }
+        public static StatusModelResponse MapToListStatusSync<T>(this DbDataReader dr) where T : new()
+        {
+            StatusModelResponse statusModelResponse = new StatusModelResponse();
+                    List<StatusModel> statusModelList = new List<StatusModel>();
+            try
+            {
+                    if (dr != null && dr.HasRows)
+                    {
+                        while (dr.Read())
+                        {
+                        StatusModel entity = new StatusModel();
+                            entity.Name = dr["Name"] != DBNull.Value ? dr["Name"].ToString() : "";
+                            entity.TemplateName = dr["TemplateName"] != DBNull.Value ? dr["TemplateName"].ToString() : "";
+                            entity.MessageId = dr["MessageId"] != DBNull.Value ? dr["MessageId"].ToString() : "";
+                            entity.Sent = dr["Sent"] != DBNull.Value ? dr["Sent"].ToString() : "";
+                            entity.Delivered = dr["Delivered"] != DBNull.Value ? dr["Delivered"].ToString() : "";
+                            entity.Failed = dr["Failed"] != DBNull.Value ? dr["Failed"].ToString() : "";
+                            entity.Read = dr["Read"] != DBNull.Value ? dr["Read"].ToString() : "";
+
+                        statusModelList.Add(entity);
+                    }
+                    
+                    statusModelResponse.StatusModelList = statusModelList;
+                    statusModelResponse.ErrorCode = 1;
+
+                    dr.Close();
+                        return statusModelResponse;
+
+                }
+                else
+                    
+                statusModelResponse.StatusModelList = [];
+                statusModelResponse.ErrorCode = 0;
+                return statusModelResponse;               
+            }
+            catch (Exception ex)
+            {
+                dr.Close();
+                statusModelResponse.StatusModelList = null;
+                statusModelResponse.ErrorCode = 0;
+                return statusModelResponse;
+                throw ex;
+            }
+
+        }
 
         public static CompanyResponse MapToListCompanySync<T>(this DbDataReader dr) where T : new()
         {
