@@ -36,7 +36,10 @@ namespace WhatsAppIntegration.Model
 
             [JsonProperty("buttons", NullValueHandling = NullValueHandling.Ignore)]
             public List<Buttons> Buttons { get; set; }
-        }
+
+            [JsonProperty("example", NullValueHandling = NullValueHandling.Ignore)]
+            public Example Example { get; set; }
+    }
 
         public class Buttons
         {
@@ -52,5 +55,11 @@ namespace WhatsAppIntegration.Model
         [JsonProperty("url", NullValueHandling = NullValueHandling.Ignore)]
         public string Url { get; set; }
 
+    }
+
+    public class Example
+    {
+        [JsonProperty("header_handle")]
+        public List<string> HeaderHandle { get; set; }
     }
 }

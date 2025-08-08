@@ -18,7 +18,7 @@ namespace WhatsAppIntegration.Data
         public DbSet<Cursors> GetCursorsList { get; set; }
         public DbSet<Paging> GetPagingList { get; set; }
         public DbSet<TemplateData> GetTemplateDataList { get; set; }
-        public DbSet<Contact> Contacts { get; set; }
+        public DbSet<Model.Contact> Contacts { get; set; }
         [BindProperty]
         public DbSet<ContactsResponse> ContactResponse { get; set; }
         public DbSet<CompanyMaster> CompanysMaster { get; set; }
@@ -35,5 +35,6 @@ namespace WhatsAppIntegration.Data
         public DbSet<StatusModel> StatusModels { get; set; }
         [BindProperty]
         public DbSet<StatusModelResponse> StatusModelResponses { get; set; }
+        public DbSet<WhatsAppIntegration.Model.MediaUploads> MediaUploads { get; set; } = default!;
     }
 }

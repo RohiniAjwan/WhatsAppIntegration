@@ -7,6 +7,7 @@ namespace WhatsAppIntegration.Model
         [Key]
         public int ErrorCode { get; set; }
         public int Id { get; set; }
+        public string? MetaId { get; set; }
         public string ErrorMessage { get; set; } = string.Empty;
     }
 }

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.OpenApi;
 using WhatsAppIntegration.Data;
 using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 
 namespace WhatsAppIntegration.Model
 {
@@ -45,6 +46,9 @@ namespace WhatsAppIntegration.Model
         public string Type { get; set; }
         public string Text { get; set; }
         public string Url { get; set; }
+
+        [JsonProperty("flow_id")]
+        public long FlowId { get; set; }
        
     }
 
@@ -75,6 +79,7 @@ namespace WhatsAppIntegration.Model
         public string? phoneNumberValue { get; set; }
         public string? websiteLinkTitle { get; set; }
         public string? websiteLinkValue { get; set; }
+        public string? metaId { get; set; }
 
     }
 }

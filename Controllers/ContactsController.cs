@@ -133,7 +133,7 @@ namespace WhatsAppIntegration.Controllers
         // POST: api/Contacts
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]// Make sure to use this namespace
-    public IActionResult PostContact(List<Contact> contactList)
+    public IActionResult PostContact(List<Model.Contact> contactList)
     {
         int p_int_prmErrCode = -1;
         string p_str_prmErrorMsg = "";
@@ -160,7 +160,7 @@ namespace WhatsAppIntegration.Controllers
                     customerTable.Columns.Add("UpdatedBy", typeof(int));
 
                     // Populate DataTable
-                    foreach (Contact c in contactList)
+                    foreach (Model.Contact c in contactList)
                     {
                         customerTable.Rows.Add(c.Name, c.PhoneNumber1, c.PhoneNumber2, c.Nationality, c.Gender, c.AreaName, c.CompanyId, c.CreatedBy, c.CreatedBy);
                     }

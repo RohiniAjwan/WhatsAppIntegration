@@ -1,6 +1,9 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.Text;
 using WhatsAppIntegration.Data;
-using WhatsAppIntegration.Controllers;
 using WhatsAppIntegration.Model;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +17,34 @@ builder.Services.AddDbContext<ApplicationDBContext>(
         builder.Configuration.GetConnectionString("DefaultConnection")
         )
     );
+
+builder.Services.AddSwaggerGen(c =>
+{
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "S8vmOYkOMPrz6xHv9iu6GVKsQWCt0kvAbsP66b8GkTsIlPJUikQvmKCPb7",
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        BearerFormat = "JWT",
+        Scheme = "Bearer"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -32,7 +63,13 @@ builder.Services.AddCors(options =>
         });
 });
 
+builder.Services.Configure<TokenSetting>(builder.Configuration.GetSection("Token"));
+
 var app = builder.Build();
+app.UseSwagger();
+app.UseSwaggerUI();
+//app.UseAuthentication();  
+//app.UseAuthorization();
 
 //cors
 app.UseCors(MyAllowSpecificOrigins);

@@ -10,14 +10,14 @@ namespace OrderDashboard.Utilities
         public static ContactsResponse MapToListContactsSync<T>(this DbDataReader dr) where T : new()
         {
             ContactsResponse contactResponse = new ContactsResponse();
-                    List<Contact> contactList = new List<Contact>();
+            List<WhatsAppIntegration.Model.Contact> contactList = new List<WhatsAppIntegration.Model.Contact>();
             try
             {
                     if (dr != null && dr.HasRows)
                     {
                         while (dr.Read())
                         {
-                        Contact entity = new Contact();
+                        WhatsAppIntegration.Model.Contact entity = new WhatsAppIntegration.Model.Contact();
                             entity.Id = dr["Id"] != null ? Convert.ToInt32(dr["Id"]) : 0;
                             entity.Name = dr["Name"] != null ? dr["Name"].ToString() : "";
                             entity.PhoneNumber1 = dr["PhoneNumber1"] != null ? dr["PhoneNumber1"].ToString() : "";
@@ -51,6 +51,48 @@ namespace OrderDashboard.Utilities
             {
                 dr.Close();
                 contactResponse.ContactList = null;
+                return contactResponse;
+                throw ex;
+            }
+
+        }
+        public static MediaUploadResponse MapToListMediaUploadsSync<T>(this DbDataReader dr) where T : new()
+        {
+            MediaUploadResponse contactResponse = new MediaUploadResponse();
+                    List<MediaUploadData> contactList = new List<MediaUploadData>();
+            try
+            {
+                    if (dr != null && dr.HasRows)
+                    {
+                        while (dr.Read())
+                        {
+                        MediaUploadData entity = new MediaUploadData();
+                            entity.Id = dr["Id"] != null ? Convert.ToInt32(dr["Id"]) : 0;
+                            entity.Name = dr["Name"] != null ? dr["Name"].ToString() : "";
+                            entity.Url = dr["url"] != null ? dr["url"].ToString() : "";
+                            entity.MetaId = dr["MetaId"] != null ? dr["MetaId"].ToString() : "";
+                            entity.MediaType = dr["MediaType"] != null ? dr["MediaType"].ToString() : "";
+                        entity.MetaSuccess = !Convert.IsDBNull(dr["MetaSuccess"]) ? (bool?)dr["MetaSuccess"] : null;
+                        entity.IsActive = !Convert.IsDBNull(dr["IsActive"]) ? (bool?)dr["IsActive"] : null;
+
+                        contactList.Add(entity);
+                    }
+                    
+                    contactResponse.MediaUploadDataList = contactList;
+
+                        dr.Close();
+                        return contactResponse;
+
+                }
+                else
+                    
+                contactResponse.MediaUploadDataList = [];
+                return contactResponse;               
+            }
+            catch (Exception ex)
+            {
+                dr.Close();
+                contactResponse.MediaUploadDataList = null;
                 return contactResponse;
                 throw ex;
             }
@@ -273,6 +315,20 @@ namespace OrderDashboard.Utilities
             }
 
             return path;
+        }
+
+        public static string GetMimeType(string filePath)
+        {
+            string extension = Path.GetExtension(filePath).ToLower();
+            return extension switch
+            {
+                ".png" => "image/png",
+                ".jpg" => "image/jpeg",
+                ".jpeg" => "image/jpeg",
+                ".mp4" => "video/mp4",
+                ".pdf" => "application/pdf",
+                _ => "application/octet-stream" // Default for unknown file types
+            };
         }
 
     }
