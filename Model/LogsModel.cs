@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations.Schema;
 
 public class LogsModel
 {
@@ -96,8 +98,67 @@ public class Message
     public string? type { get; set; }
     public Interactive? interactive { get; set; }
     public Context? context { get; set; }
+    public Text? text { get; set; }
+    public Image? image { get; set; }
+    public Location? location { get; set; }
+    public Image? audio { get; set; }
+    public Image? video { get; set; }
+    [JsonProperty("contacts")]
+    [NotMapped]  // <- prevents EF Core from trying to create a relationship
+    public List<VCard>? vCard { get; set; }
 }
 
+[Keyless]
+public class VCard
+{
+    public Name? name { get; set; }
+    public List<Phones>? phones { get; set; }
+    public List<Emails>? emails { get; set; }
+}
+public class Phones
+{
+    [Key]
+    public string? phone { get; set; }
+    public string? type { get; set; }
+}
+public class Emails
+{
+    [Key]
+    public string? email { get; set; }
+    public string? type { get; set; }
+}
+public class Name
+{
+    [JsonProperty("formatted_name")]
+    [Key]
+    public string? formattedName { get; set; }
+    [JsonProperty("first_name")]
+    public string? firstName { get; set; }
+    [JsonProperty("last_name")]
+    public string? lastName { get; set; }
+}
+public class Location
+{
+    public string? latitude { get; set; }
+    public string? longitude { get; set; }
+    [Key]
+    public string? name { get; set; }
+    public string? address { get; set; }
+}
+public class Image
+{
+    public string? caption { get; set; }
+    [JsonProperty("mime_type")]
+    public string? mimeType { get; set; }
+    public string? sha256 { get; set; }
+    [Key]
+    public string? id { get; set; }
+}
+public class Text
+{
+    [Key]
+    public string? body { get; set; }
+}
 public class Context
 {
     public string? from { get; set; }
