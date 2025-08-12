@@ -9,6 +9,7 @@ namespace WhatsAppIntegration.Model
  public partial class SendMessage
     {
         public List<string>? PhoneNumber { get; set; }
+        public string? PhoneNumberConv { get; set; }
         [Key]
         public string? TemplateTitle { get; set; }
     }
