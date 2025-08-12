@@ -5,6 +5,7 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using WhatsAppIntegration.Data;
 using WhatsAppIntegration.Model;
+using WhatsAppIntegration.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -64,6 +65,13 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.Configure<TokenSetting>(builder.Configuration.GetSection("Token"));
+
+// Add EF Core
+builder.Services.AddDbContext<ApplicationDBContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Register MessageServices in DI
+builder.Services.AddScoped<MessageServices>();
 
 var app = builder.Build();
 app.UseSwagger();

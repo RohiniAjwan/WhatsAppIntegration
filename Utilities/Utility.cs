@@ -1,5 +1,6 @@
 ﻿
 using System.Data.Common;
+using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using WhatsAppIntegration.Model;
 
@@ -7,6 +8,96 @@ namespace OrderDashboard.Utilities
 {
     public static class Utility
     {
+        public static List<T> MapToList<T>(this DbDataReader dr) where T : new()
+        {
+            try
+            {
+                if (dr != null && dr.HasRows)
+                {
+
+                    var entity = typeof(T);
+                    var entities = new List<T>();
+                    var propDict = new Dictionary<string, PropertyInfo>();
+                    var props = entity.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+                    propDict = props.ToDictionary(p => p.Name.ToUpper(), p => p);
+
+                    while (dr.Read())
+                    {
+                        T newobject = new T();
+                        for (int i = 0; i < dr.FieldCount; i++)
+                        {
+                            if (propDict.ContainsKey(dr.GetName(i).ToUpper()))
+                            {
+                                var info = propDict[dr.GetName(i).ToUpper()];
+                                if (info != null && info.CanWrite)
+                                {
+                                    var val = dr.GetValue(i);
+                                    info.SetValue(newobject, (val == DBNull.Value) ? null : val, null);
+                                }
+                            }
+                        }
+
+                        entities.Add(newobject);
+                    }
+
+                    dr.Close();
+                    return entities;
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                dr.Close();
+                throw ex;
+            }
+
+        }
+
+        public static T MapToObject<T>(this DbDataReader dr) where T : new()
+        {
+            try
+            {
+                if (dr != null && dr.HasRows)
+                {
+
+                    var entity = typeof(T);
+                    var entities = new List<T>();
+#pragma warning disable S1854 // Unused assignments should be removed
+                    var propDict = new Dictionary<string, PropertyInfo>();
+#pragma warning restore S1854 // Unused assignments should be removed
+                    var props = entity.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+                    propDict = props.ToDictionary(p => p.Name.ToUpper(), p => p);
+                    T newobject = new T();
+
+                    while (dr.Read())
+                    {
+                        for (int i = 0; i < dr.FieldCount; i++)
+                        {
+                            if (propDict.ContainsKey(dr.GetName(i).ToUpper()))
+                            {
+                                var info = propDict[dr.GetName(i).ToUpper()];
+                                if (info != null && info.CanWrite)
+                                {
+                                    var val = dr.GetValue(i);
+                                    info.SetValue(newobject, (val == DBNull.Value) ? null : val, null);
+                                }
+                            }
+                        }
+
+                    }
+
+                    dr.Close();
+                    return newobject;
+                }
+                return default;
+            }
+            catch (Exception ex)
+            {
+                dr.Close();
+                throw ex;
+            }
+
+        }
         public static ContactsResponse MapToListContactsSync<T>(this DbDataReader dr) where T : new()
         {
             ContactsResponse contactResponse = new ContactsResponse();
